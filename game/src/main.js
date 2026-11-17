@@ -1,11 +1,11 @@
 // Giltwake — entry point: screens (title, play, won, lost), the fixed-step loop, input wiring,
 // sound cues from game events, and the ?shot= bootstrap used for screenshots.
 
-import { TUNING, VIEW } from './config.js';
+import { LAYOUT, TUNING, VIEW } from './config.js';
 import { createInput } from './input.js';
 import { createAudio } from './audio.js';
 import { createRenderer } from './render.js';
-import { createRun, updateAttract, updateRun } from './world.js';
+import { createRun, inDockGlow, updateAttract, updateRun } from './world.js';
 import { stageShot } from './shots.js';
 
 const canvas = document.getElementById('game');
@@ -95,8 +95,19 @@ function playEventSounds(run) {
 }
 
 function step(dt) {
+  const screenBefore = game.screen;
+  const runBefore = game.run;
+  const wasFrozen = game.frozen;
   handleActions();
+  // A press the menus just used (start, restart, unfreeze) must not also reach the new run.
+  if (game.screen !== screenBefore || game.run !== runBefore || wasFrozen !== game.frozen) input.endFrame();
+  simulate(dt);
+  // One-shot presses live for exactly one step and are cleared only after the run has had its
+  // chance to read them: Space / click to dock is read inside updateRun.
   input.endFrame();
+}
+
+function simulate(dt) {
   if (game.frozen) return;
   game.clock += dt;
   const run = game.run;
@@ -143,6 +154,9 @@ if (shot) {
   game.clock = staged.clock;
   game.frozen = true;
 }
+
+// ?test exposes the live state to automated browser tests (positioning only; input stays real).
+if (params.has('test')) window.giltwakeTest = { game, inDockGlow, TUNING, LAYOUT };
 
 renderer.draw(view());
 document.body.dataset.ready = shot ? `shot-${shot}` : 'game';

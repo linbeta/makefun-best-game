@@ -301,7 +301,8 @@ function drawLanding(ctx, run, t, camX) {
   const edgeY = far ? LAYOUT.waterTop : LAYOUT.waterBottom;
   const dir = far ? 1 : -1;
 
-  // the glow on the water: where docking is possible
+  // the glow on the water: where docking is possible. The dashed ring at TUNING.dockRadius is the
+  // edge world.js's inDockGlow() tests against (the boat counts as soon as its hull crosses it).
   const pulse = 0.75 + 0.25 * Math.sin(t * 3);
   const glow = ctx.createRadialGradient(sx, dock.y, 6, sx, dock.y, TUNING.dockRadius + 20);
   glow.addColorStop(0, `rgba(255, 216, 120, ${0.5 * pulse})`);

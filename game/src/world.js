@@ -176,8 +176,7 @@ function updatePlay(run, input, dt) {
   updateChain(run, dt);
   followCamera(run, dt);
 
-  const dock = stretch.dock;
-  run.inDockGlow = Math.hypot(boat.x - dock.x, boat.y - dock.y) < TUNING.dockRadius;
+  run.inDockGlow = inDockGlow(stretch.dock, boat.x, boat.y);
   if (run.inDockGlow && (input.took('dock') || input.took('click'))) beginDocking(run);
 
   if (boat.hull <= 0) {
@@ -347,6 +346,15 @@ function updateChain(run, dt) {
 }
 
 // ---------------------------------------------------------------- landings, win and loss
+
+/**
+ * The one rule for "inside a landing's glow", shared by the dock check and the renderer: the glow is
+ * the disc inside the dashed ring (radius TUNING.dockRadius, world coordinates), and the boat is in it
+ * as soon as any part of its hull (TUNING.boatRadius) crosses that ring.
+ */
+export function inDockGlow(dock, x, y) {
+  return Math.hypot(x - dock.x, y - dock.y) <= TUNING.dockRadius + TUNING.boatRadius;
+}
 
 function beginDocking(run) {
   run.phase = 'docking';
