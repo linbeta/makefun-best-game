@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Giltwake</title>
+  <link rel="icon" href="data:,">
+  <style>
+    html, body { margin: 0; height: 100%; background: #03080e; overflow: hidden; }
+    body { display: flex; align-items: center; justify-content: center; }
+    #game {
+      display: block;
+      width: min(100vw, calc(100vh * 1.6));
+      height: min(100vh, calc(100vw / 1.6));
+      cursor: crosshair;
+      image-rendering: auto;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="game" width="960" height="600" aria-label="Giltwake: steer a gilded paper boat down the moonlit Brass Canal"></canvas>
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>
